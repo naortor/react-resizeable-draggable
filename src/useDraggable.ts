@@ -12,6 +12,7 @@ type Options = {
     minX: number;
     minY: number;
     translate: boolean;
+    grid: [number, number];
 };
 
 const defaultOptions: Options = {
@@ -20,6 +21,7 @@ const defaultOptions: Options = {
     maxX: Math.max(document.documentElement.clientWidth ?? 0, window.innerWidth ?? 0),
     maxY: Math.max(document.documentElement.clientHeight ?? 0, window.innerHeight ?? 0),
     translate: false,
+    grid: [15, 15],
 };
 
 export default function useDraggable<TElement>(
@@ -29,14 +31,21 @@ export default function useDraggable<TElement>(
     const originalPosition = useRef<Position>(startAt);
     const lastMousePosition = useRef<Position | null>();
     const [position, setPosition] = useState(startAt);
-    const { minX, minY, maxX, maxY, translate } = { ...defaultOptions, ...options };
+    const {
+        minX,
+        minY,
+        maxX,
+        maxY,
+        translate,
+        grid: [stepX, stepY],
+    } = { ...defaultOptions, ...options };
 
     useEffect(() => {
         document.removeEventListener('mousemove', onMouseMove);
         document.removeEventListener('mouseup', onMouseUp);
     }, []);
 
-    function getCalculatedPosition(deltaX: number, deltaY: number) {
+    function getCalculatedPosition({ deltaX = 0, deltaY = 0 }: { deltaX?: number; deltaY?: number }) {
         return ({ x, y }: Position): Position => {
             return {
                 x: minmax(x + deltaX, minX, maxX),
@@ -58,9 +67,21 @@ export default function useDraggable<TElement>(
 
         const deltaX = currentX - lastX;
         const deltaY = currentY - lastY;
-
         lastMousePosition.current = { x: currentX, y: currentY };
-        setPosition(getCalculatedPosition(deltaX, deltaY));
+
+        if (Math.abs(deltaX) < stepX && Math.abs(deltaY) < stepY) return;
+
+        if (Math.abs(deltaX) < stepX) {
+            setPosition(getCalculatedPosition({ deltaY }));
+            return;
+        }
+
+        if (Math.abs(deltaY) < stepY) {
+            setPosition(getCalculatedPosition({ deltaX }));
+            return;
+        }
+
+        setPosition(getCalculatedPosition({ deltaX, deltaY }));
     }
 
     function onMouseDown(e: React.MouseEvent<TElement>) {
