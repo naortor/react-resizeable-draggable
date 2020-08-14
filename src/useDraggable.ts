@@ -67,6 +67,7 @@ export default function useDraggable<TElement>(
 
         const deltaX = currentX - lastX;
         const deltaY = currentY - lastY;
+
         lastMousePosition.current = { x: currentX, y: currentY };
 
         if (Math.abs(deltaX) < stepX && Math.abs(deltaY) < stepY) return;
