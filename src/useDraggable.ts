@@ -46,12 +46,10 @@ export default function useDraggable<TElement>(
     }, []);
 
     function getCalculatedPosition({ deltaX = 0, deltaY = 0 }: { deltaX?: number; deltaY?: number }) {
-        return ({ x, y }: Position): Position => {
-            return {
-                x: minmax(x + deltaX, minX, maxX),
-                y: minmax(y + deltaY, minY, maxY),
-            };
-        };
+        return ({ x, y }: Position): Position => ({
+            x: minmax(x + deltaX, minX, maxX),
+            y: minmax(y + deltaY, minY, maxY),
+        });
     }
 
     function onMouseMove(e: MouseEvent) {
