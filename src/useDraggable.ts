@@ -11,6 +11,7 @@ type Options = {
     maxY: number;
     minX: number;
     minY: number;
+    translate: boolean;
 };
 
 const defaultOptions: Options = {
@@ -18,15 +19,17 @@ const defaultOptions: Options = {
     minY: 0,
     maxX: Math.max(document.documentElement.clientWidth ?? 0, window.innerWidth ?? 0),
     maxY: Math.max(document.documentElement.clientHeight ?? 0, window.innerHeight ?? 0),
+    translate: false,
 };
 
 export default function useDraggable<TElement>(
     startAt: Position,
     options?: Partial<Options>,
 ): [(e: React.MouseEvent<TElement>) => void, Position] {
+    const originalPosition = useRef<Position>(startAt);
     const lastMousePosition = useRef<Position | null>();
     const [position, setPosition] = useState(startAt);
-    const { minX, minY, maxX, maxY } = { ...defaultOptions, ...options };
+    const { minX, minY, maxX, maxY, translate } = { ...defaultOptions, ...options };
 
     useEffect(() => {
         document.removeEventListener('mousemove', onMouseMove);
@@ -72,5 +75,14 @@ export default function useDraggable<TElement>(
         lastMousePosition.current = null;
     }
 
-    return [onMouseDown, position];
+    if (!translate) {
+        return [onMouseDown, position];
+    }
+
+    const translatePosition: Position = {
+        x: (position.x - originalPosition.current.x) * -1,
+        y: (position.y - originalPosition.current.y) * -1,
+    };
+
+    return [onMouseDown, translatePosition];
 }
