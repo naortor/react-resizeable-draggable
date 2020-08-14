@@ -10,17 +10,20 @@ export default function useDraggable<TElement>(startAt: Position): [Position, (e
     const [position, setPosition] = useState(startAt);
 
     function onMouseMove(e: MouseEvent) {
-        const currentPosition: Position = { x: e.clientX, y: e.clientY };
+        const currentX = e.clientX;
+        const currentY = e.clientY;
 
         if (!lastMousePosition.current) {
-            lastMousePosition.current = currentPosition;
+            lastMousePosition.current = { x: currentX, y: currentY };
             return;
         }
 
-        const xDelta = currentPosition.x - lastMousePosition.current.x;
-        const yDelta = currentPosition.y - lastMousePosition.current.y;
+        const { x: lastX, y: lastY } = lastMousePosition.current;
 
-        lastMousePosition.current = currentPosition;
+        const xDelta = currentX - lastX;
+        const yDelta = currentY - lastY;
+
+        lastMousePosition.current = { x: currentX, y: currentY };
         setPosition(({ x, y }) => ({ x: x + xDelta, y: y + yDelta }));
     }
 
