@@ -1,0 +1,29 @@
+{
+    "extends": ["../.eslintrc", "plugin:react/recommended", "plugin:jsx-a11y/recommended"],
+    "plugins": ["react", "jsx-a11y", "react-hooks"],
+    "parserOptions": {
+        "project": "./client/tsconfig.verify.json",
+        "ecmaVersion": 2018,
+        "sourceType": "module",
+        "ecmaFeatures": {
+            "jsx": true
+        }
+    },
+    "settings": {
+        "react": {
+            "version": "detect"
+        }
+    },
+    "rules": {
+        "react/prop-types": "off",
+        "react-hooks/rules-of-hooks": "error",
+        "react-hooks/exhaustive-deps": "error",
+        "react/jsx-indent-props": "off",
+        "react/jsx-indent": "off",
+        "react/jsx-props-no-spreading": "off",
+        "jsx-a11y/accessible-emoji": "off"
+    },
+    "env": {
+        "browser": true
+    }
+}
