@@ -5,7 +5,7 @@ type Position = {
     y: number;
 };
 
-export default function useDraggable<TElement>(startAt: Position): [Position, (e: React.MouseEvent<TElement>) => void] {
+export default function useDraggable<TElement>(startAt: Position): [(e: React.MouseEvent<TElement>) => void, Position] {
     const lastMousePosition = useRef<Position | null>();
     const [position, setPosition] = useState(startAt);
 
@@ -39,5 +39,5 @@ export default function useDraggable<TElement>(startAt: Position): [Position, (e
         lastMousePosition.current = null;
     }
 
-    return [position, onMouseDown];
+    return [onMouseDown, position];
 }
